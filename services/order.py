@@ -7,7 +7,7 @@ from django.db.models import QuerySet
 from db.models import Order, Ticket, User, MovieSession
 
 
-def create_order(tickets: list[Ticket],
+def create_order(tickets: list[dict],
                  username: str,
                  date: Optional[datetime] = None,
                  ) -> None:

@@ -132,12 +132,10 @@ class Ticket(models.Model):
         ]
 
     def __str__(self) -> str:
+        d_str = datetime.strftime
         return (
             f"{self.movie_session.movie.title} "
-            f"{datetime.strftime(
-                self.movie_session.show_time,
-                '%Y-%m-%d %H:%M:%S'
-            )}"
+            f"{d_str(self.movie_session.show_time, '%Y-%m-%d %H:%M:%S')}"
             f" (row: {self.row}, seat: {self.seat})"
         )
 

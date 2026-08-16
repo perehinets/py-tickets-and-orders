@@ -1,8 +1,7 @@
 from typing import Optional
 
 from django.contrib.auth import get_user_model
-
-from db.models import User
+from django.db.models import QuerySet
 
 
 def create_user(
@@ -12,7 +11,7 @@ def create_user(
     first_name: Optional[str] = None,
     last_name: Optional[str] = None,
 ) -> None:
-    user = User.objects.create_user(
+    user = get_user_model().objects.create_user(
         username=username,
         password=password
     )
@@ -25,7 +24,7 @@ def create_user(
     user.save()
 
 
-def get_user(user_id: int) -> User:
+def get_user(user_id: int) -> QuerySet:
     return get_user_model().objects.get(pk=user_id)
 
 

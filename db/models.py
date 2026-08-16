@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 from typing import Any
 
 from django.contrib.auth.models import AbstractUser
@@ -69,25 +69,36 @@ class Order(models.Model):
         ordering = ["-created_at"]
 
     def __str__(self) -> str:
-        return f"{datetime.datetime.strftime(self.created_at, '%Y-%m-%d %H:%M:%S')}"
+        return f"{datetime.strftime(self.created_at, '%Y-%m-%d %H:%M:%S')}"
 
 
 class Ticket(models.Model):
-    movie_session = models.ForeignKey(to=MovieSession, on_delete=models.CASCADE)
+    movie_session = models.ForeignKey(
+        to=MovieSession,
+        on_delete=models.CASCADE
+    )
     order = models.ForeignKey(to=Order, on_delete=models.CASCADE)
     row = models.IntegerField()
     seat = models.IntegerField()
 
     def clean(self) -> None:
         if not self.row <= self.movie_session.cinema_hall.rows:
-            raise ValidationError({"row": f"row number must be in available range:"
-                                  f" (1, rows): (1, {self.movie_session.cinema_hall.rows})"}
-                                  )
+            raise ValidationError(
+                {
+                    "row": f"row number must be in available range:"
+                    f" (1, rows): "
+                    f"(1, {self.movie_session.cinema_hall.rows})"
+                }
+            )
 
         if not self.seat <= self.movie_session.cinema_hall.seats_in_row:
-            raise ValidationError({"seat": f"seat number must be in available range:"
-                                  f" (1, seats_in_row): (1, {self.movie_session.cinema_hall.seats_in_row})"}
-                                  )
+            raise ValidationError(
+                {
+                    "seat": f"seat number must be in available range:"
+                    f" (1, seats_in_row): "
+                    f"(1, {self.movie_session.cinema_hall.seats_in_row})"
+                }
+            )
 
     def save(self, *args, **kwargs) -> Any:
         self.full_clean()
@@ -95,12 +106,18 @@ class Ticket(models.Model):
 
     class Meta:
         constraints = [
-            UniqueConstraint(fields=["movie_session", "row", "seat"], name="unique_seat_in_row")
+            UniqueConstraint(
+                fields=["movie_session", "row", "seat"],
+                name="unique_seat_in_row"
+            )
         ]
 
     def __str__(self) -> str:
         return (f"{self.movie_session.movie.title} "
-                f"{datetime.datetime.strftime(self.movie_session.show_time, '%Y-%m-%d %H:%M:%S')}"
+                f"{datetime.strftime(
+                    self.movie_session.show_time,
+                    '%Y-%m-%d %H:%M:%S'
+                )}"
                 f" (row: {self.row}, seat: {self.seat})"
                 )
 
